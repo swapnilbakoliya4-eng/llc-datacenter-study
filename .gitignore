@@ -1,0 +1,14 @@
+# Binaries and object files
+bin/
+obj/
+*.o
+
+# Traces (kept locally in WSL, never pushed to GitHub)
+traces/*.champsimtrace.xz
+traces/*.trace
+traces/*.xz
+
+# Temporary logs and dumps
+*.tmp
+*.out
+results/raw_dumps/
