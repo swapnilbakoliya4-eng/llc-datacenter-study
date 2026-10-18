@@ -11,5 +11,4 @@ traces/*.xz
 # Temporary logs and dumps
 *.tmp
 *.out
-results/raw_dumps/
 *.gz
