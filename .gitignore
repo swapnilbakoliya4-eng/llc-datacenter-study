@@ -12,3 +12,4 @@ traces/*.xz
 *.tmp
 *.out
 results/raw_dumps/
+*.gz
