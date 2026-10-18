@@ -1,0 +1,7 @@
+# Checkpoint-1 Target Traces Manifest
+# Format: [Category]  [Trace Identifier]  [Workload Characteristic]
+
+SPEC        605.mcf_s           Pointer-chasing memory stress (MPKI > 15)
+SPEC        602.gcc_s           High branch intensity & deep control flow
+Google_DC   gtrace_sample_01    Datacenter service slice (Target LLC MPKI > 1.0)
+Google_DC   gtrace_sample_02    Datacenter service slice (Target LLC MPKI > 1.0)
