@@ -38,9 +38,11 @@ Simulations run on ChampSim in a single-core out-of-order configuration with har
 | `SPEC: 602.gcc_s` | LRU | 0.2886 | 351 | 178,289 | 0.20% | 17.83 |
 | `SPEC: 602.gcc_s` | SRRIP | 0.2890 | 96 | 178,544 | 0.05% | 17.85 |
 | `SPEC: 602.gcc_s` | DRRIP | 0.2888 | 343 | 178,297 | 0.19% | 17.83 |
+| `SPEC: 602.gcc_s` | SHIP | 0.2907 | 254 | 178,386 | 0.14% | 17.84 |
 | `Google: arizona_0000` | LRU | 0.9461 | 15,183 | 33,353 | 31.28% | 3.34 |
 | `Google: arizona_0000` | SRRIP | 0.9484 | 13,844 | 34,706 | 28.51% | 3.47 |
 | `Google: arizona_0000` | DRRIP | 0.9461 | 15,015 | 33,521 | 30.94% | 3.35 |
+| `Google: arizona_0000` | SHIP | 0.9485 | 15,178 | 33,368 | 31.27% | 3.34 |
 
 ### Observations
 1. **SRRIP hit degradation on Google trace:** On `arizona_0000`, SRRIP drops hit rate from 31.28% to 28.51% (-1,339 hits compared to LRU). Inserting lines with distant RRPV ($RRPV = 2^M - 2$) evicts useful blocks too early due to irregular reuse intervals.
