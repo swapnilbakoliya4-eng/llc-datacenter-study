@@ -30,7 +30,7 @@ This project investigates where and why classical and predictive Last-Level Cach
 
 
 
-Simulations use ChampSim configured for single-core execution with all hardware prefetchers disabled to isolate replacement decisions.
+Simulations use ChampSim configured for single-core execution with all hardware prefetchers disabled to strictly isolate replacement decisions.
 
 
 
@@ -88,7 +88,7 @@ Simulations use ChampSim configured for single-core execution with all hardware 
 
 \*\*Key Findings:\*\*
 
-1\. \*\*SRRIP Degradation on Datacenter Workload:\*\* On `arizona\_0000`, static SRRIP loses 1,339 cache hits compared to LRU, dropping hit rate from 31.28% to 28.51%. Datacenter memory references exhibit heavy-tailed, irregular reuse intervals. Inserting lines with distant RRPV ($RRPV = 2^M - 2$) causes useful lines to age out before their second reference.
+1\. \*\*SRRIP Degradation on Datacenter Workload:\*\* On `arizona\_0000`, static SRRIP loses 1,339 cache hits compared to LRU, dropping hit rate from 31.28% to 28.51%. Datacenter memory references exhibit heavy-tailed, irregular reuse intervals. Inserting lines with distant RRPV (`RRPV = 2^M - 2`) causes useful lines to age out before their second reference.
 
 2\. \*\*DRRIP Set-Dueling Saturation:\*\* DRRIP's dedicated monitor sets detect that SRRIP causes higher miss counts than bimodal insertion. The Policy Selection Counter (PSEL) dynamically steers follower sets back toward bimodal/LRU insertion, recovering hit rate to 30.94% and resulting in identical IPC (0.9461).
 
