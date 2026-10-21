@@ -1,37 +1,37 @@
-# LLC Replacement Policies on Datacenter Workloads: A Characterization Study
+# CS683 Project: LLC Replacement Policies on Datacenter Workloads
 
-**Course:** CS683 Advanced Computer Architecture  
-**Author:** Swapnil Bakoliya (Roll: 26m1150), IIT Bombay  
+**Author:** Swapnil Bakoliya (Roll: 26M1150)  
+**Course:** CS683 Advanced Computer Architecture, IIT Bombay  
 
 ---
 
 ## 1. Overview
-Cache replacement policies like SRRIP and DRRIP were historically designed around scientific and desktop benchmarks (SPEC CPU), where execution is dominated by tight loops and high temporal locality. Warehouse-scale datacenter software (e.g., Google microservices, RPC frameworks, search indexing) exhibits fundamentally different memory behavior, featuring deep call stacks, large instruction working sets, and irregular pointer-chasing.
+Most cache replacement policies (such as SRRIP and DRRIP) were evaluated on SPEC CPU benchmarks, where memory access patterns are dominated by loops or sequential scans. Datacenter software (RPC services, search queries, distributed storage) features larger code footprints, deep call stacks, and irregular pointer traversals.
 
-This project investigates where and why classical and predictive Last-Level Cache (LLC) replacement policies fail on hyperscale datacenter traces from **DPC-4 (HPCA 2026)** compared to SPEC CPU 2017 baselines.
+This project evaluates how standard LLC replacement policies behave on real Google datacenter traces from DPC-4 (HPCA 2026) compared against SPEC CPU 2017 baselines in ChampSim.
 
 ---
 
-## 2. Experimental Configuration
+## 2. Experimental Setup
 
-Simulations use ChampSim configured for single-core execution with all hardware prefetchers disabled to strictly isolate replacement decisions.
+Simulations run on ChampSim in a single-core out-of-order configuration with hardware prefetchers disabled to isolate replacement decisions.
 
-| Parameter | Configuration |
+| Parameter | Value |
 | :--- | :--- |
-| **Core Model** | 1-core out-of-order, 4-wide fetch/decode/retire, 128-entry ROB |
-| **L1 Data / Instruction** | 32 KB, 8-way set-associative, 4-cycle latency |
-| **L2 Cache** | 256 KB, 8-way set-associative, 12-cycle latency |
-| **Last-Level Cache (LLC)** | **2 MB, 16-way set-associative, 20-cycle latency** (2,048 sets, 64B line) |
-| **Prefetcher** | None (disabled) |
-| **Evaluation Window** | 2,000,000 warmup instructions, 10,000,000 simulation instructions |
+| Core | 1-core OoO, 4-wide fetch/retire, 128-entry ROB |
+| L1 D-Cache / I-Cache | 32 KB, 8-way, 4 cycles |
+| L2 Cache | 256 KB, 8-way, 12 cycles |
+| LLC | 2 MB, 16-way, 20 cycles (2048 sets, 64B lines) |
+| Prefetcher | None |
+| Simulation Window | 2M warmup, 10M detailed execution |
 
-**Workloads Evaluated:**
+**Workloads:**
 * `SPEC: 602.gcc_s` (SPEC CPU 2017): Reference desktop benchmark (17.83 LLC MPKI).
-* `Google: arizona_0000` (DPC-4 gtrace_v2): Production datacenter service trace (3.34 LLC MPKI).
+* `Google: arizona_0000` (DPC-4 gtrace_v2): Production datacenter trace (3.34 LLC MPKI).
 
 ---
 
-## 3. Checkpoint-1 Baseline Results
+## 3. Checkpoint-1 Results
 
 | Workload | Policy | IPC | LLC Hits | LLC Misses | Hit Rate | LLC MPKI |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -42,23 +42,23 @@ Simulations use ChampSim configured for single-core execution with all hardware 
 | `Google: arizona_0000` | SRRIP | 0.9484 | 13,844 | 34,706 | 28.51% | 3.47 |
 | `Google: arizona_0000` | DRRIP | 0.9461 | 15,015 | 33,521 | 30.94% | 3.35 |
 
-**Key Findings:**
-1. **SRRIP Degradation on Datacenter Workload:** On `arizona_0000`, static SRRIP loses 1,339 cache hits compared to LRU, dropping hit rate from 31.28% to 28.51%. Datacenter memory references exhibit heavy-tailed, irregular reuse intervals. Inserting lines with distant RRPV (`RRPV = 2^M - 2`) causes useful lines to age out before their second reference.
-2. **DRRIP Set-Dueling Saturation:** DRRIP dedicated monitor sets detect that SRRIP causes higher miss counts than bimodal insertion. The Policy Selection Counter (PSEL) dynamically steers follower sets back toward bimodal/LRU insertion, recovering hit rate to 30.94% and resulting in identical IPC (0.9461).
+### Observations
+1. **SRRIP hit degradation on Google trace:** On `arizona_0000`, SRRIP drops hit rate from 31.28% to 28.51% (-1,339 hits compared to LRU). Inserting lines with distant RRPV ($RRPV = 2^M - 2$) evicts useful blocks too early due to irregular reuse intervals.
+2. **DRRIP Set-Dueling back to LRU:** Monitor sets detect that SRRIP causes more misses than bimodal insertion. The PSEL counter saturates toward bimodal/LRU insertion, recovering the hit rate to 30.94% and matching LRU's 0.9461 IPC.
 
 ---
 
 ## 4. Repository Structure
 
-* `configs/`: ChampSim configuration files (2MB LLC, prefetcher OFF).
-* `results/raw_dumps/`: Raw simulation output logs.
-* `results/plots/`: Comparative metric plots (IPC, Hit Rate, MPKI).
-* `results/summary.csv`: Parsed metric summary.
+* `configs/`: ChampSim configuration files (2MB LLC, prefetcher disabled).
+* `results/raw_dumps/`: Raw ChampSim output logs.
+* `results/plots/`: Comparison plots (IPC, Hit Rate, MPKI).
+* `results/summary.csv`: Parsed metrics table.
 * `scripts/`: Log parser (`parse_results.py`), plotting (`plot_results.py`), and locality profiler (`profile_locality.py`).
-* `traces/`: DPC-4 trace manifest and download metadata.
+* `traces/`: Trace index and metadata (`manifest.txt`).
 
 ---
 
-## 5. Checkpoint-2 Roadmap (Phase 2 Target: Nov 26)
-* **Predictive Policy Evaluation:** Port and evaluate fine-grained signature-based predictors: SHiP (PC signatures), Hawkeye (OPTgen / Belady MIN classifier), and Mockingjay (continuous ETA reuse distance).
-* **Footprint Scaling:** Sweep LLC capacity from 2 MB to 16 MB to identify the threshold where datacenter workloads transition from capacity thrashing to stability.\n
+## 5. Next Steps (Checkpoint-2)
+* Evaluate PC-signature and predictor policies: SHiP, Hawkeye, and Mockingjay.
+* Sweep LLC size (2 MB to 16 MB) to observe capacity sensitivity.
