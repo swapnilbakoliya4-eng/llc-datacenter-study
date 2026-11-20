@@ -68,10 +68,17 @@ void mockingjay::update_sampler(long set, uint64_t full_addr, uint64_t ip)
 long mockingjay::find_victim(uint32_t, uint64_t, long set, const champsim::cache_block*, champsim::address, champsim::address, access_type)
 {
   age_set(set);
-  auto begin = std::next(std::begin(etr), set * NUM_WAY);
-  auto end = std::next(begin, NUM_WAY);
-  auto victim = std::max_element(begin, end);
-  return std::distance(begin, victim);
+  long victim = 0;
+  int max_score = -1000;
+  for (long w = 0; w < NUM_WAY; ++w) {
+    int val = etr[static_cast<std::size_t>(set * NUM_WAY + w)];
+    int score = (val < -4) ? (MAX_RD - val) : val;
+    if (score > max_score) {
+      max_score = score;
+      victim = w;
+    }
+  }
+  return victim;
 }
 
 void mockingjay::replacement_cache_fill(uint32_t, long set, long way, champsim::address full_addr, champsim::address ip, champsim::address, access_type type)
