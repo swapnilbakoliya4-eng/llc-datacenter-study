@@ -1,0 +1,4 @@
+traces/602.gcc_s-1850B.champsimtrace.xz
+traces/605.mcf_s-1554B.champsimtrace.xz
+traces/arizona_0000.champsim.gz
+traces/tahoe_0000.champsim.gz

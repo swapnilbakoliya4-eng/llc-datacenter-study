@@ -1,0 +1,12 @@
+traces/602.gcc_s-1850B.champsimtrace.xz
+traces/605.mcf_s-1554B.champsimtrace.xz
+traces/620.omnetpp_s-874B.champsimtrace.xz
+traces/623.xalancbmk_s-165B.champsimtrace.xz
+traces/649.fotonik3d_s-1176B.champsimtrace.xz
+traces/654.roms_s-294B.champsimtrace.xz
+traces/arizona_0000.champsim.gz
+traces/tahoe_0000.champsim.gz
+traces/delta_0000.champsim.gz
+traces/merced_0000.champsim.gz
+traces/yankee_0000.champsim.gz
+traces/charlie_0000.champsim.gz
